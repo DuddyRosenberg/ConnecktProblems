@@ -38,11 +38,12 @@ namespace Coneckt.Web.Controllers
         {
             //BYOP Eligibility
             dynamic byopEligibilityResult = null;
-            for (int i = 0; i < 3; i++)
+            string byopEligibilityStatus = "pending";
+            while (byopEligibilityStatus == "pending")
             {
                 byopEligibilityResult = await _tracfone.CheckBYOPEligibility(model.Serial);
+                byopEligibilityStatus = byopEligibilityResult["status"]["message"].ToString();
             }
-            string byopEligibilityStatus = byopEligibilityResult["status"]["code"].ToString();
 
             if (byopEligibilityStatus != "0" && byopEligibilityStatus != "10008" && byopEligibilityStatus != "11023")
             {
@@ -284,6 +285,15 @@ namespace Coneckt.Web.Controllers
             }
             repo.WriteAllResponse(bulkData);
             return Json(results);
+        }
+
+        public IActionResult Example(string zipCode)
+        {
+            var model = new ActivateActionModel
+            {
+                Zip=zipCode
+            };
+            return View(model);
         }
     }
 }
